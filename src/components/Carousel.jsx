@@ -27,7 +27,7 @@ export default function Carousel() {
                 centeredSlides={true}
                 loop={true}
                 autoplay={{
-                    delay: 35000,
+                    delay: 3500,
                     disableOnInteraction: false,
                 }}
                 pagination={{
@@ -41,8 +41,6 @@ export default function Carousel() {
                 <SwiperSlide><Slide bg={slideBg2} text={text2} /></SwiperSlide>
                 <SwiperSlide><Slide bg={slideBg3} text={text3} /></SwiperSlide>
             </Swiper >
-            <div className="swiper-button-prev text-red-500 hover:text-green-500"></div>
-            <div className="swiper-button-next text-blue-500 hover:text-yellow-500"></div>
         </>
     );
 }

@@ -2,14 +2,17 @@ import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import 'react-tabs/style/react-tabs.css';
 import JobCard from './JobCard';
 import { useEffect, useState } from 'react';
+import axios from 'axios'
 
 
 const TabsSection = () => {
     const [jobs, setJobs] = useState([])
     useEffect(() => {
-        fetch(`${import.meta.env.VITE_API_URL}/all-jobs`)
-            .then(res => res.json())
-            .then(data => setJobs(data));
+        const getData = async () => {
+            const { data } = await axios(`${import.meta.env.VITE_API_URL}/all-jobs`)
+            setJobs(data)
+        }
+        getData()
     }, [])
     return (
         <Tabs>
@@ -20,23 +23,31 @@ const TabsSection = () => {
                 </p>
                 <div className="flex justify-center items-center">
                     <TabList>
-                        <Tab>Web Development</Tab>
-                        <Tab>Graphic Design</Tab>
-                        <Tab>Digital Marketing</Tab>
+                        <Tab>Web Developer</Tab>
+                        <Tab>Graphics Designer</Tab>
+                        <Tab>Digital Marketer</Tab>
                     </TabList>
                 </div>
                 <TabPanel>
-                    <div className="flex flex-wrap gap-5 ">
+                    <div className="flex mt-4 flex-wrap gap-5 ">
                         {
-                            jobs.map(job => <JobCard key={job._id} job={job} />)
+                            jobs.filter(j => j.category === 'Web Development').map(job => <JobCard key={job._id} job={job} jobs={jobs} setJobs={setJobs} />)
                         }
                     </div>
                 </TabPanel>
                 <TabPanel>
-                    <h2>Any content 2</h2>
+                    <div className="flex mt-4 flex-wrap gap-5 ">
+                        {
+                            jobs.filter(j => j.category === 'Graphics Design').map(job => <JobCard key={job._id} job={job} jobs={jobs} setJobs={setJobs} />)
+                        }
+                    </div>
                 </TabPanel>
                 <TabPanel>
-                    <h2>Any content 3</h2>
+                    <div className="flex mt-4 flex-wrap gap-5 ">
+                        {
+                            jobs.filter(j => j.category === 'Digital Marketing').map(job => <JobCard key={job._id} job={job} jobs={jobs} setJobs={setJobs} />)
+                        }
+                    </div>
                 </TabPanel>
             </div>
 

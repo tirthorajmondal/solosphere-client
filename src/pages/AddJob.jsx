@@ -1,26 +1,44 @@
+import axios from "axios";
 import useAuth from "../hooks/useAuth";
+import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import { useState } from "react";
 
 const AddJob = () => {
     const { user } = useAuth()
-    const handleSubmit = e => {
+    const [startDate, setStartDate] = useState(new Date())
+    const navigate = useNavigate()
+    const handleSubmit = async (e) => {
         e.preventDefault()
         const form = e.target;
         const title = form.job_title.value;
         const email = form.email.value;
-        const deadline = '';
+        const deadline = startDate;
         const category = form.category.value;
-        const min_price = form.min_price.value;
-        const max_price = form.max_price.value;
+        const min_price = parseFloat(form.min_price.value);
+        const max_price = parseFloat(form.max_price.value);
         const description = form.description.value;
-        const jobData = { title, email, deadline, category, range: `$${min_price}-$${max_price}`, description }
+        const buyer = { name: user?.displayName, email: user?.email, photo: user?.photoURL }
+        const jobData = { title, email, deadline, category, min_price, max_price, description, buyer }
         console.log(jobData);
-        fetch(`${import.meta.env.VITE_API_URL}/all-jobs`, {
-            method: 'POST',
-            headers: {
-                'content-type': 'application/json'
-            },
-            body: JSON.stringify(jobData)
-        })
+
+        const { data } = await axios.post(`${import.meta.env.VITE_API_URL}/all-jobs`, jobData);
+        console.log(data);
+        toast.success("Job Added Successfully!")
+        navigate('/my-posted-jobs')
+
+        // fetch(`${import.meta.env.VITE_API_URL}/all-jobs`, {
+        //     method: 'POST',
+        //     headers: {
+        //         'content-type': 'application/json'
+        //     },
+        //     body: JSON.stringify(jobData)
+        // }).then(res => res.json())
+        //     .then(data => {
+        //         console.log(data);
+        //     })
     }
     return (
         <div className='flex justify-center items-center min-h-[calc(100vh-306px)] my-12'>
@@ -60,6 +78,9 @@ const AddJob = () => {
                             <label className='text-gray-700'>Deadline</label>
 
                             {/* Date Picker Input Field */}
+                            <DatePicker
+                                className="border p-2 rounded-md"
+                                selected={startDate} onChange={(date) => setStartDate(date)} />
                         </div>
 
                         <div className='flex flex-col gap-2 '>
