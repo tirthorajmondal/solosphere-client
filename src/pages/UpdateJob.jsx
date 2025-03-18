@@ -1,16 +1,18 @@
-import axios from "axios";
-import useAuth from "../hooks/useAuth";
-import toast from "react-hot-toast";
-import { useNavigate } from "react-router-dom";
 import DatePicker from "react-datepicker";
+import toast from "react-hot-toast";
+import { useLoaderData, useNavigate } from "react-router-dom";
 import "react-datepicker/dist/react-datepicker.css";
 import { useState } from "react";
+import axios from "axios";
 
-const AddJob = () => {
-    const { user } = useAuth()
-    const [startDate, setStartDate] = useState(new Date())
+const UpdateJob = () => {
+    const job = useLoaderData()
+    console.log(job);
+    const { title, deadline, email, category, min_price, max_price, description } = job || {};
+    const [startDate, setStartDate] = useState(new Date(deadline))
     const navigate = useNavigate()
-    const handleSubmit = async (e) => {
+
+    const handleUpdate = async (e) => {
         e.preventDefault()
         const form = e.target;
         const title = form.job_title.value;
@@ -20,14 +22,12 @@ const AddJob = () => {
         const min_price = parseFloat(form.min_price.value);
         const max_price = parseFloat(form.max_price.value);
         const description = form.description.value;
-        const buyer = { name: user?.displayName, email: user?.email, photo: user?.photoURL }
-        const jobData = { title, email, deadline, category, min_price, max_price, description, buyer }
-        console.log(jobData);
-
+        // const buyer = { name: user?.displayName, email: user?.email, photo: user?.photoURL }
+        const updatedJobData = { title, email, deadline, category, min_price, max_price, description, }
         try {
-            const { data } = await axios.post(`${import.meta.env.VITE_API_URL}/all-jobs`, jobData);
+            const { data } = await axios.put(`${import.meta.env.VITE_API_URL}/job/${job?._id}`, updatedJobData);
             console.log(data);
-            toast.success("Job Added Successfully!")
+            toast.success('Job Data Updated Successfully.')
             navigate('/my-posted-jobs')
         }
         catch (err) {
@@ -38,10 +38,10 @@ const AddJob = () => {
         <div className='flex justify-center items-center min-h-[calc(100vh-306px)] py-12 pb-6'>
             <section className=' p-2 md:p-6 mx-auto bg-white rounded-md shadow-md '>
                 <h2 className='text-lg font-semibold text-gray-700 capitalize '>
-                    Post a Job
+                    Update Job
                 </h2>
 
-                <form onSubmit={handleSubmit}>
+                <form onSubmit={handleUpdate}>
                     <div className='grid grid-cols-1 gap-6 mt-4 sm:grid-cols-2'>
                         <div>
                             <label className='text-gray-700 ' htmlFor='job_title'>
@@ -51,6 +51,7 @@ const AddJob = () => {
                                 id='job_title'
                                 name='job_title'
                                 type='text'
+                                defaultValue={title}
                                 className='block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md  focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40  focus:outline-none focus:ring'
                             />
                         </div>
@@ -63,7 +64,7 @@ const AddJob = () => {
                                 id='emailAddress'
                                 type='email'
                                 name='email'
-                                defaultValue={user?.email}
+                                defaultValue={email}
                                 disabled
                                 className='block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md  focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40  focus:outline-none focus:ring'
                             />
@@ -84,6 +85,7 @@ const AddJob = () => {
                             <select
                                 name='category'
                                 id='category'
+                                defaultValue={category}
                                 className='border p-2 rounded-md'
                             >
                                 <option value='Web Development'>Web Development</option>
@@ -99,6 +101,7 @@ const AddJob = () => {
                                 id='min_price'
                                 name='min_price'
                                 type='number'
+                                defaultValue={min_price}
                                 className='block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md  focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40  focus:outline-none focus:ring'
                             />
                         </div>
@@ -111,6 +114,7 @@ const AddJob = () => {
                                 id='max_price'
                                 name='max_price'
                                 type='number'
+                                defaultValue={max_price}
                                 className='block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md  focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40  focus:outline-none focus:ring'
                             />
                         </div>
@@ -123,17 +127,18 @@ const AddJob = () => {
                             className='block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md  focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40  focus:outline-none focus:ring'
                             name='description'
                             id='description'
+                            defaultValue={description}
                         ></textarea>
                     </div>
                     <div className='flex justify-end mt-6'>
                         <button className='px-8 py-2.5 leading-5 text-white transition-colors duration-300 transhtmlForm bg-gray-700 rounded-md hover:bg-gray-600 focus:outline-none focus:bg-gray-600'>
-                            Save
+                            Update
                         </button>
                     </div>
                 </form>
             </section>
         </div>
     )
-}
+};
 
-export default AddJob;
+export default UpdateJob;

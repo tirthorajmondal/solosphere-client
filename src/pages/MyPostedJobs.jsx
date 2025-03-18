@@ -1,22 +1,38 @@
 import { useEffect, useState } from "react";
-import { useLoaderData } from "react-router-dom";
+import { Link, useLoaderData } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
 import axios from "axios";
+import toast from "react-hot-toast";
 
 const MyPostedJobs = () => {
     const [myJobs, setMyJobs] = useState([])
     const { user } = useAuth()
-    const email = user?.email;
     // console.log(email);
-    useEffect(() => {
-        const getData = async () => {
-            const { data } = await axios(`${import.meta.env.VITE_API_URL}/my-posted-jobs/${email}`)
+
+    const handleteDlete = async id => {
+        try {
+            const { data } = await axios.delete(`${import.meta.env.VITE_API_URL}/job/${id}`)
             console.log(data);
+            // sweet alert delete confirmation
+
+            toast.success('Job Deleted')
+            getData()
         }
-        // getData()
-    }, [])
+        catch (err) {
+            toast.error(err.message)
+        }
+    }
+
+    const getData = async () => {
+        const { data } = await axios(`${import.meta.env.VITE_API_URL}/my-posted-jobs/${user?.email}`)
+        setMyJobs(data)
+    }
+
+    useEffect(() => {
+        getData()
+    }, [user])
     return (
-        <section className='container px-4 mx-auto pt-12'>
+        <section className='container px-4 mx-auto pt-12 pb-6'>
             <div className='flex items-center gap-x-3'>
                 <h2 className='text-lg font-medium text-gray-800 '>My Posted Jobs</h2>
 
@@ -77,37 +93,39 @@ const MyPostedJobs = () => {
                                 </thead>
                                 <tbody className='bg-white divide-y divide-gray-200 '>
                                     {
-                                        myJobs.map(job => <tr>
+                                        myJobs.map(job => <tr key={job?._id}>
                                             <td className='px-4 py-4 text-sm text-gray-500  whitespace-nowrap'>
-                                                Build Dynamic Website
+                                                {job?.title}
                                             </td>
 
                                             <td className='px-4 py-4 text-sm text-gray-500  whitespace-nowrap'>
-                                                10/04/2024
+                                                {new Date(job?.deadline).toLocaleDateString()}
                                             </td>
 
                                             <td className='px-4 py-4 text-sm text-gray-500  whitespace-nowrap'>
-                                                $100-$200
+                                                ${job?.min_price}-${job?.max_price}
                                             </td>
                                             <td className='px-4 py-4 text-sm whitespace-nowrap'>
                                                 <div className='flex items-center gap-x-2'>
                                                     <p
-                                                        className='px-3 py-1 rounded-full text-blue-500 bg-blue-100/60
-                                 text-xs'
+                                                        className={`px-3 py-1 rounded-full text-blue-500 bg-blue-100/60
+                                 text-xs`}
                                                     >
-                                                        Web Development
+                                                        {job?.category}
                                                     </p>
                                                 </div>
                                             </td>
                                             <td
-                                                title=''
+                                                title={job?.description}
                                                 className='px-4 py-4 text-sm text-gray-500  whitespace-nowrap'
                                             >
-                                                Lorem ipsum, dolor si adipisicing elit. Ex, provident?..
+                                                {job?.description.slice(0, 50)}
                                             </td>
                                             <td className='px-4 py-4 text-sm whitespace-nowrap'>
                                                 <div className='flex items-center gap-x-6'>
-                                                    <button className='text-gray-500 transition-colors duration-200   hover:text-red-500 focus:outline-none'>
+                                                    <button
+                                                        onClick={() => handleteDlete(job._id)}
+                                                        className='text-gray-500 transition-colors duration-200   hover:text-red-500 focus:outline-none'>
                                                         <svg
                                                             xmlns='http://www.w3.org/2000/svg'
                                                             fill='none'
@@ -124,21 +142,23 @@ const MyPostedJobs = () => {
                                                         </svg>
                                                     </button>
 
-                                                    <button className='text-gray-500 transition-colors duration-200   hover:text-yellow-500 focus:outline-none'>
-                                                        <svg
-                                                            xmlns='http://www.w3.org/2000/svg'
-                                                            fill='none'
-                                                            viewBox='0 0 24 24'
-                                                            strokeWidth='1.5'
-                                                            stroke='currentColor'
-                                                            className='w-5 h-5'
-                                                        >
-                                                            <path
-                                                                strokeLinecap='round'
-                                                                strokeLinejoin='round'
-                                                                d='M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10'
-                                                            />
-                                                        </svg>
+                                                    <button
+                                                        className='text-gray-500 transition-colors duration-200   hover:text-yellow-500 focus:outline-none'>
+                                                        <Link to={`/update/${job._id}`}>
+                                                            <svg
+                                                                xmlns='http://www.w3.org/2000/svg'
+                                                                fill='none'
+                                                                viewBox='0 0 24 24'
+                                                                strokeWidth='1.5'
+                                                                stroke='currentColor'
+                                                                className='w-5 h-5'
+                                                            >
+                                                                <path
+                                                                    strokeLinecap='round'
+                                                                    strokeLinejoin='round'
+                                                                    d='M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10'
+                                                                />
+                                                            </svg></Link>
                                                     </button>
                                                 </div>
                                             </td>
