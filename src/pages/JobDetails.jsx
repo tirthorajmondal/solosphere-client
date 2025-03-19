@@ -19,9 +19,9 @@ const JobDetails = () => {
         const buyerEmail = buyer?.email;
         const form = e.target;
         const bidEmail = user?.email;
-            if (buyerEmail === user?.email) {
-                return toast.error("Action Not Permited")
-            }
+        if (buyerEmail === user?.email) {
+            return toast.error("Action Not Permited")
+        }
         const bidPrice = form.price.value;
         if (bidPrice < min_price) return toast.error(`Minimum bid price is $${min_price}`)
         if (bidPrice > max_price) return toast.error(`Maximum bid price is $${max_price}`)
@@ -33,9 +33,13 @@ const JobDetails = () => {
 
         try {
             const { data } = await axios.post(`${import.meta.env.VITE_API_URL}/bids`, bidData);
-            console.log(data);
             if (data.message === 'already exist') {
-                toast.error('You have already bid on this job.')
+                return toast.error('You have already bid on this job.')
+            }
+            if (data.insertedId) {
+                form.reset()
+                toast.success('Bid Placed Successfully')
+                navigate('/my-bids')
             }
         }
         catch (err) {

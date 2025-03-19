@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import logo from "../assets/images/logo.png"
 import bgImg from "../assets/images/register.jpg"
 import useAuth from "../hooks/useAuth";
@@ -7,13 +7,14 @@ import toast from "react-hot-toast";
 
 const Register = () => {
     const { createUser, signInWithGoogle, updateUserProfile, user, setUser } = useAuth();
+    const location = useLocation();
     const handleGoogleSignIn = async () => {
         try {
             // console.log('clicked');
             const result = await signInWithGoogle()
             setUser(result.user)
             toast.success('Login Successful')
-            navigate('/')
+            navigate(location.state)
         }
         catch (err) {
             toast.error(err?.message)
@@ -29,16 +30,16 @@ const Register = () => {
         const password = form?.password?.value;
         try {
             const result = await createUser(email, password)
-            toast.success('Account creation successful')
             await updateUserProfile(name, photo)
             setUser({ ...user, photoUrl: photo, displayName: name })
+            toast.success('Account creation successful')
         }
         catch (err) {
             toast.error(err?.message)
         }
     }
     return (
-        <div className='flex justify-center items-center min-h-[calc(100vh-306px)] my-4'>
+        <div className='flex justify-center items-center min-h-[calc(100vh-306px)] py-6'>
             <div className='flex w-full max-w-sm mx-auto overflow-hidden bg-white rounded-lg shadow-lg  lg:max-w-4xl '>
                 <div className='w-full px-6 py-8 md:px-8 lg:w-1/2'>
                     <div className='flex justify-center mx-auto'>
