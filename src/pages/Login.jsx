@@ -1,14 +1,13 @@
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, Navigate, useLocation, useNavigate } from "react-router-dom";
 import logo from "../assets/images/logo.png"
 import bgImg from "../assets/images/login.jpg"
 import useAuth from "../hooks/useAuth";
 import toast from "react-hot-toast";
 
 const Login = () => {
-    const { signIn, signInWithGoogle, setUser } = useAuth();
+    const { signIn, signInWithGoogle, setUser, user } = useAuth();
     const navigate = useNavigate();
     const location = useLocation()
-    console.log(location);
 
     const handleGoogleSignIn = async () => {
         try {
@@ -39,6 +38,7 @@ const Login = () => {
             toast.error(err?.message)
         }
     }
+    if (user) return <Navigate to='/'></Navigate>
     return (
         <div className='flex justify-center items-center min-h-[calc(100vh-306px)] py-6'>
             <div className='flex w-full max-w-sm mx-auto overflow-hidden bg-white rounded-lg shadow-lg  lg:max-w-4xl '>

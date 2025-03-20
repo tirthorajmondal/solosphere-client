@@ -1,4 +1,4 @@
-import { Link, useLocation } from "react-router-dom";
+import { Link, Navigate, useLocation, useNavigate } from "react-router-dom";
 import logo from "../assets/images/logo.png"
 import bgImg from "../assets/images/register.jpg"
 import useAuth from "../hooks/useAuth";
@@ -7,6 +7,7 @@ import toast from "react-hot-toast";
 
 const Register = () => {
     const { createUser, signInWithGoogle, updateUserProfile, user, setUser } = useAuth();
+    const navigate = useNavigate()
     const location = useLocation();
     const handleGoogleSignIn = async () => {
         try {
@@ -28,16 +29,21 @@ const Register = () => {
         const photo = form?.photo?.value;
         const email = form?.email?.value;
         const password = form?.password?.value;
+        console.log(name, photo, email, password);
         try {
             const result = await createUser(email, password)
+            const newUser = result.user;
             await updateUserProfile(name, photo)
-            setUser({ ...user, photoUrl: photo, displayName: name })
-            toast.success('Account creation successful')
+            setUser({ ...newUser, photoUrl: photo, displayName: name })
+            toast.success('You have createed a new account')
         }
         catch (err) {
             toast.error(err?.message)
         }
     }
+
+    if (user) return <Navigate to='/'></Navigate>
+
     return (
         <div className='flex justify-center items-center min-h-[calc(100vh-306px)] py-6'>
             <div className='flex w-full max-w-sm mx-auto overflow-hidden bg-white rounded-lg shadow-lg  lg:max-w-4xl '>

@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
 import logo from "../assets/images/logo.png"
-
+import { CgProfile } from "react-icons/cg";
 const Navbar = () => {
     const { user, logOut } = useAuth();
     return (
@@ -40,11 +40,11 @@ const Navbar = () => {
                             className='btn btn-ghost p-0.5 btn-circle avatar w-8 h-8 md:h-auto md:w-10'
                         >
                             <div className='w-7 md:w-10 rounded-full' title={user?.displayName}>
-                                <img
+                                {user.photoURL && <img
                                     referrerPolicy='no-referrer'
                                     alt='User Profile Photo'
                                     src={user?.photoURL}
-                                />
+                                /> || <CgProfile className="w-full h-full" />}
                             </div>
                         </div>
                         <ul

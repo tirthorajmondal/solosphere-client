@@ -1,4 +1,4 @@
-import { useLoaderData } from "react-router-dom"
+import { useLoaderData, useNavigate } from "react-router-dom"
 import useAuth from "../hooks/useAuth";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
@@ -9,6 +9,7 @@ import toast from "react-hot-toast";
 const JobDetails = () => {
     const { user } = useAuth()
     const job = useLoaderData();
+    const navigate = useNavigate()
     const { _id, title, deadline, category, min_price, max_price, description, buyer } = job || {};
     const [startDate, setStartDate] = useState(new Date())
 

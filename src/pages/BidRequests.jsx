@@ -1,7 +1,6 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import useAuth from "../hooks/useAuth";
-import toast from "react-hot-toast";
 
 const BidRequests = () => {
     const { user } = useAuth()
@@ -104,8 +103,11 @@ const BidRequests = () => {
                                             <td className='px-4 py-4 text-sm whitespace-nowrap'>
                                                 <div className='flex items-center gap-x-2'>
                                                     <p
-                                                        className='px-3 py-1 rounded-full text-blue-500 bg-blue-100/60
-                                 text-xs'
+                                                        className={`px-3 py-1 rounded-full
+                                                             ${bidReq.category === 'Web Development' && 'text-blue-500 bg-blue-100/60'} 
+                                                           ${bidReq.category === 'Graphics Design' && 'text-red-500 bg-red-100/60'} 
+                                                           ${bidReq.category === 'Digital Marketing' && 'text-green-500 bg-green-100/60'}
+                                 text-xs`}
                                                     >
                                                         {bidReq.category}
                                                     </p>
@@ -114,12 +116,14 @@ const BidRequests = () => {
                                             <td className='px-4 py-4 text-sm font-medium text-gray-700 whitespace-nowrap'>
                                                 <div className='inline-flex items-center px-3 py-1 rounded-full gap-x-2 bg-yellow-100/60 text-yellow-500'>
                                                     <span className='h-1.5 w-1.5 rounded-full bg-yellow-500'></span>
-                                                    <h2 className='text-sm font-normal '>{bidReq.bidStatus }</h2>
+                                                    <h2 className='text-sm font-normal '>{bidReq.bidStatus}</h2>
                                                 </div>
                                             </td>
                                             <td className='px-4 py-4 text-sm whitespace-nowrap'>
                                                 <div className='flex items-center gap-x-6'>
-                                                    <button className='text-gray-500 transition-colors duration-200   hover:text-red-500 focus:outline-none'>
+                                                    <button
+                                                    // onClick={}
+                                                     className='text-gray-500 transition-colors duration-200   hover:text-green-500 focus:outline-none'>
                                                         <svg
                                                             xmlns='http://www.w3.org/2000/svg'
                                                             fill='none'
@@ -141,7 +145,7 @@ const BidRequests = () => {
                                                         </select> */}
                                                     </button>
 
-                                                    <button className='text-gray-500 transition-colors duration-200   hover:text-yellow-500 focus:outline-none'>
+                                                    <button className='text-gray-500 transition-colors duration-200   hover:text-red-500 focus:outline-none'>
                                                         <svg
                                                             xmlns='http://www.w3.org/2000/svg'
                                                             fill='none'
